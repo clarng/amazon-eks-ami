@@ -116,7 +116,7 @@ INSTALL_DOCKER="${INSTALL_DOCKER:-true}"
 if [[ "$INSTALL_DOCKER" == "true" ]]; then
     sudo amazon-linux-extras enable docker
     sudo groupadd -fog 1950 docker
-    sudo useradd --gid $(getent group docker | cut -d: -f3) docker
+    # sudo useradd --gid $(getent group docker | cut -d: -f3) docker
 
     # install version lock to put a lock on dependecies
     sudo yum install -y yum-plugin-versionlock

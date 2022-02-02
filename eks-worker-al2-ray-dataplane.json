@@ -18,8 +18,8 @@
     "runc_version": "1.0.0-2.amzn2",
     "cni_plugin_version": "v0.8.6",
     "pull_cni_from_github": "true",
-    "source_ami_id": "",
-    "source_ami_owners": "137112412989",
+    "source_ami_id": "ami-0fe74570d87750175",
+    "source_ami_owners": "602401143452",
     "source_ami_filter_name": "amzn2-ami-minimal-hvm-*",
     "arch": null,
     "instance_type": null,
@@ -45,13 +45,6 @@
       "ami_users": "{{user `ami_users`}}",
       "snapshot_users": "{{user `ami_users`}}",
       "source_ami_filter": {
-        "filters": {
-          "name": "{{user `source_ami_filter_name`}}",
-          "architecture": "{{user `arch`}}",
-          "root-device-type": "ebs",
-          "state": "available",
-          "virtualization-type": "hvm"
-        },
         "owners": [
           "{{user `source_ami_owners`}}"
         ],
@@ -70,7 +63,7 @@
         {
           "device_name": "/dev/xvda",
           "volume_type": "gp2",
-          "volume_size": 20,
+          "volume_size": 200,
           "delete_on_termination": true
         }
       ],
@@ -111,17 +104,6 @@
     {
       "type": "shell",
       "remote_folder": "{{ user `remote_folder`}}",
-      "expect_disconnect": true,
-      "script": "{{template_dir}}/scripts/upgrade_kernel.sh",
-      "environment_vars": [
-        "KUBERNETES_VERSION={{user `kubernetes_version`}}",
-        "KERNEL_VERSION={{user `kernel_version`}}"
-      ]
-    },
-    {
-      "type": "shell",
-      "pause_before": "90s",
-      "remote_folder": "{{ user `remote_folder`}}",
       "inline": [
         "mkdir -p /tmp/worker/"
       ]
@@ -150,6 +132,24 @@
         "AWS_SESSION_TOKEN={{user `aws_session_token`}}",
         "CLEANUP_IMAGE={{user `cleanup_image`}}",
         "SONOBUOY_E2E_REGISTRY={{user `sonobuoy_e2e_registry`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "remote_folder": "{{ user `remote_folder`}}",
+      "script": "{{template_dir}}/scripts/pull_images.sh",
+      "environment_vars": [
+        "KERNEL_VERSION={{user `kernel_version`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "remote_folder": "{{ user `remote_folder`}}",
+      "expect_disconnect": true,
+      "script": "{{template_dir}}/scripts/upgrade_kernel.sh",
+      "environment_vars": [
+        "KUBERNETES_VERSION={{user `kubernetes_version`}}",
+        "KERNEL_VERSION={{user `kernel_version`}}"
       ]
     },
     {
